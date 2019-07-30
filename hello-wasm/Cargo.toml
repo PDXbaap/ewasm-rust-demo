@@ -1,0 +1,21 @@
+[package]
+name = "hello-wasm"
+version = "0.1.0"
+authors = ["liangchuan <cc14514@icloud.com>"]
+edition = "2018"
+publish = false
+
+[dependencies]
+wasm-bindgen = "0.2"
+ewasm_api = {path="/app/rusthome/ewasm-rust-api"}
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.release]
+opt-level = 'z'
+debug = false
+rpath = false
+debug-assertions = false
+codegen-units = 1
+lto = true

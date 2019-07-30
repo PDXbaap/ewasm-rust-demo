@@ -1,0 +1,13 @@
+hello:
+  file: "pkg/hello_wasm_bg.wasm"
+  remapimports:
+    preset: "ewasm"
+  trimexports:
+    preset: "ewasm"
+  verifyimports:
+    preset: "ewasm"
+  verifyexports:
+    preset: "ewasm"
+  repack:
+    preset: "ewasm"
+
