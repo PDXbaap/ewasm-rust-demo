@@ -318,5 +318,80 @@ $> chisel run
 
 ### 部署合约
 
-TODO
+使用 web3.js 可以很方便的发布 wasm 合约
+
+```javascript
+const fs = require('fs')
+const Web3 = require('web3')
+const co = require('co')
+const thunk = require('thunkify')
+const Tx = require('ethereumjs-tx')
+const ethereumUri = 'http://10.0.0.76:8545'
+const web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri))
+const chainId = 738
+const gasLimit = 15000000
+const gasPrice = 20000000000
+const keyStore = '{"address":"86082fa9d3c14d00a8627af13cfa893e80b39101","crypto":{"cipher":"aes-128-ctr","ciphertext":"71932cbcfdb4484433393044c0114aec0e737e7eeac908ec5edb23051c1e6e90","cipherparams":{"iv":"42424805dfad0ae0d8f08af898b56a03"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"5946638ccdf2e18f206ffbc86f7d1ffe8d91f4be904c07dae716c58cf5789802"},"mac":"d419b9583c16dd04fff155a1b946b6ec749954459cc745c70ce59742ac332809"},"id":"900ab389-4085-44a0-baa7-e14ab929e5fd","version":3}'
+const pwd = '123456'
+const getTransactionCount = thunk(web3.eth.getTransactionCount)
+
+function pub(path) {
+    let rs = fs.createReadStream(path)
+    rs.on('data', function (data) {
+        data = data.toString('hex')
+        pubContract(data)
+    })
+    rs.on('close', function () {
+        console.log('closed')
+    })
+}
+
+function pubContract(data) {
+    let decryptObj = web3.eth.accounts.decrypt(keyStore, pwd)
+    let address = decryptObj.address
+    let privateKey = decryptObj.privateKey
+    privateKey = Buffer.from(privateKey.substring(2), 'hex')
+
+    co(function* () {
+        let nonce = yield getTransactionCount(address, 'pending')
+        let rawTransaction = {
+            "from": address,
+            "nonce": "0x" + nonce.toString(16),
+            "gasPrice": web3.utils.toHex(gasPrice),
+            "gasLimit": web3.utils.toHex(gasLimit),
+            "data": '0x' + data,
+            "chainId": web3.utils.toHex(chainId)
+        }
+        let tx = new Tx(rawTransaction)
+        tx.sign(privateKey)
+        let serializedTx = tx.serialize()
+        let sign = '0x' + serializedTx.toString('hex')
+        try {
+            let date = new Date();
+            let transaction = web3.eth.sendSignedTransaction(sign)
+            transaction.on('confirmation', (confirmationNumber, receipt) => {
+                console.log(`[${date.toLocaleString()} @BATCH] confirmation ${confirmationNumber}`);
+            });
+            transaction.on('transactionHash', hash => {
+                console.log(`[${date.toLocaleString()} @BATCH()] hash ${hash}`);
+            });
+            transaction.on('receipt', receipt => {
+                console.log('reciept', receipt);
+            });
+            transaction.on('error', console.error);
+        } catch (error) {
+            console.log('sendSignedTransaction err:', error);
+        }
+    })
+}
+
+let arguments = process.argv.splice(2);
+pub(arguments[0])
+```
+
+
+
+
+
+
 
