@@ -1,0 +1,23 @@
+{
+  "name": "wasm_contract_test",
+  "version": "1.0.0",
+  "description": "wasm contract publish and run with pdx chain",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": [
+    "wasm",
+    "contract",
+    "pdx"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "co": "^4.6.0",
+    "ethereumjs-tx": "1.3.7",
+    "string-format": "^2.0.0",
+    "thunkify": "^2.1.2",
+    "web3": "1.0.0-beta.34"
+  }
+}
