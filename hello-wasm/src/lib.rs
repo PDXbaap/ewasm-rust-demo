@@ -52,7 +52,7 @@ fn put_data() {
             // 用来将不限制大小的 key / value 保存在合约状态中
             // 值得注意的是此方法的 gas 是以数据大小来计算的
             // 每 32byte 数据所使用的 gas 与 storage_store 相同
-            ewasm_api::pdx::storage_store2(k.as_bytes(), v.as_bytes());
+            ewasm_api::pdx::storage_store(k.as_bytes(), v.as_bytes());
         }
     }
 }
@@ -69,7 +69,7 @@ fn get_data() {
         // 用来获取 key 对应的不限制大小的 value
         // 值得注意的是此方法的 gas 是以数据大小来计算的
         // 每 32byte 数据所使用的 gas 与 storage_store 相同
-        let v: Vec<u8> = ewasm_api::pdx::storage_load2(k.as_bytes());
+        let v: Vec<u8> = ewasm_api::pdx::storage_load(k.as_bytes());
         // 将合约执行结果返回给调用端
         ewasm_api::finish_data(&v[..]);
     }
