@@ -1,45 +1,3 @@
-## 开发环境安装
-
-pdx-chain 使用 rust 作为 ewasm 合约开发语言，并通过 rust 工具链对合约进行编译，具体安装与使用流程如下
-
-1. 安装 rustup
-
-```
-curl https://sh.rustup.rs -sSf | sh
-```
-
->注意，在安装脚本执行时要选择 `nightly` 频道，否则无法完成后续工具安装 
->安装时如果 path 处理失败，需要手动加载一下环境变量 : `source $HOME/.cargo/env`
-
-
-2. 安装 rust 标准库
-
-```
-rustup component add rust-src
-```
-
-3. 安装 wasm-pack 编译工具
-
-```
-curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-```
-
-4. 安装 wasm 后期处理工具
-
-```bash
-$> git clone https://github.com/PDXbaap/wasm-chisel.git
-$> cd wasm-chisel
-$> cargo build --release
-```
-
-编译成功后会在 `target/release` 目录下找到 `chisel` 程序，确保将其复制到 `$PATH` 目录
-
-
-__有关 Rust 更多内容请参考：__
-
-https://www.rust-lang.org/zh-CN/learn/get-started
-
-
 ## 合约开发规范
 
 ewasm 合约接口规范由以太坊定制，指定模块结构等信息，pdx-chain 严格遵循此规范，具体如下
@@ -80,6 +38,48 @@ ewasm 合约接口规范由以太坊定制，指定模块结构等信息，pdx-c
 >定义目标方法和输入参数，事实上 `solidity` 也是这么做的，只是我们把这个灵活性 <br>
 >交还给开发者实现，以统一的 `main` 函数作为入口，然后自行封装 `input` 序列化方案，<br>
 >`solidity` 使用了 `rlp` 序列化 `input` , 在后面的例子中我们可以看到更加灵活的方式。<br>
+
+
+## 开发环境安装
+
+pdx-chain 使用 rust 作为 ewasm 合约开发语言，并通过 rust 工具链对合约进行编译，具体安装与使用流程如下
+
+1. 安装 rustup
+
+```
+curl https://sh.rustup.rs -sSf | sh
+```
+
+>注意，在安装脚本执行时要选择 `nightly` 频道，否则无法完成后续工具安装 
+>安装时如果 path 处理失败，需要手动加载一下环境变量 : `source $HOME/.cargo/env`
+
+
+2. 安装 rust 标准库
+
+```
+rustup component add rust-src
+```
+
+3. 安装 wasm-pack 编译工具
+
+```
+curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+```
+
+4. 安装 wasm 后期处理工具
+
+```bash
+$> git clone https://github.com/PDXbaap/wasm-chisel.git
+$> cd wasm-chisel
+$> cargo build --release
+```
+
+编译成功后会在 `target/release` 目录下找到 `chisel` 程序，确保将其复制到 `$PATH` 目录
+
+
+__有关 Rust 更多内容请参考：__
+
+https://www.rust-lang.org/zh-CN/learn/get-started
 
 
 ## PDX WASM 样例合约 
@@ -320,77 +320,63 @@ $> chisel run
 以上步骤将在 `pkg` 目录中得到 `hello_wasm_bg.wasm` 文件，接下来我们去 `pdx-chain` 部署这份合约
 
 
-### 部署合约
+### 部署&调用合约
 
-使用 web3.js 可以很方便的发布 wasm 合约
+可以使用 `web3.js` 很方便的在 `pdx-chain` 上发布和使用 `wasm` 合约，我们提供了一个简单的封装用以演示 `hello-wasm` 的部署和调用合约中提供的三个方法
+
+可以将 (test-wasm-js)[https://github.com/PDXbaap/ewasm-rust-demo/tree/master/test-wasm-js] 目录下的演示代码下载到本地，
+
+代码依赖 `nodejs` 环境以及 `npm` 工具，下载后 `npm install` 安装依赖并修改 `config.js` 填入正确的参数即可通过如下操作完成部署和使用合约
+
+
+#### config.js
+
+* ethereumUri :
+* chainId :
+* gasLimit :
+* ethereumUri :
+* ethereumUri :
+* ethereumUri :
+* ethereumUri :
+* ethereumUri :
+
+```
+const config = {
+    'ethereumUri': 'http://127.0.0.1:8545', 
+    'chainId': 738,
+    'gasLimit': 15000000,
+    'gasPrice': 18000000000,
+    'keyStore': '{"address":"86082fa9d3c14d00a8627af13cfa893e80b39101","crypto":{"cipher":"aes-128-ctr","ciphertext":"71932cbcfdb4484433393044c0114aec0e737e7eeac908ec5edb23051c1e6e90","cipherparams":{"iv":"42424805dfad0ae0d8f08af898b56a03"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"5946638ccdf2e18f206ffbc86f7d1ffe8d91f4be904c07dae716c58cf5789802"},"mac":"d419b9583c16dd04fff155a1b946b6ec749954459cc745c70ce59742ac332809"},"id":"900ab389-4085-44a0-baa7-e14ab929e5fd","version":3}',
+    'password': '123456',
+    'wasm_path': '/Users/buyanping/Desktop/hello_wasm_bg.wasm',
+    'methods': {'put': 'put:{},{}', 'get': 'get:{}', 'GetCounter': 'GetCounter'}
+}
+module.exports = config
+```
+
+
+#### 部署
 
 ```javascript
-const fs = require('fs')
-const Web3 = require('web3')
-const co = require('co')
-const thunk = require('thunkify')
-const Tx = require('ethereumjs-tx')
-const ethereumUri = 'http://127.0.0.1:8545'
-const web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri))
-const chainId = 738
-const gasLimit = 15000000
-const gasPrice = 20000000000
-const keyStore = '{"address":"86082fa9d3c14d00a8627af13cfa893e80b39101","crypto":{"cipher":"aes-128-ctr","ciphertext":"71932cbcfdb4484433393044c0114aec0e737e7eeac908ec5edb23051c1e6e90","cipherparams":{"iv":"42424805dfad0ae0d8f08af898b56a03"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"5946638ccdf2e18f206ffbc86f7d1ffe8d91f4be904c07dae716c58cf5789802"},"mac":"d419b9583c16dd04fff155a1b946b6ec749954459cc745c70ce59742ac332809"},"id":"900ab389-4085-44a0-baa7-e14ab929e5fd","version":3}'
-const pwd = '123456'
-const getTransactionCount = thunk(web3.eth.getTransactionCount)
 
-function pub(path) {
-    let rs = fs.createReadStream(path)
-    rs.on('data', function (data) {
-        data = data.toString('hex')
-        pubContract(data)
-    })
-    rs.on('close', function () {
-        console.log('closed')
-    })
-}
+```
 
-function pubContract(data) {
-    let decryptObj = web3.eth.accounts.decrypt(keyStore, pwd)
-    let address = decryptObj.address
-    let privateKey = decryptObj.privateKey
-    privateKey = Buffer.from(privateKey.substring(2), 'hex')
+#### 调用 PUT 函数（修改状态）
 
-    co(function* () {
-        let nonce = yield getTransactionCount(address, 'pending')
-        let rawTransaction = {
-            "from": address,
-            "nonce": "0x" + nonce.toString(16),
-            "gasPrice": web3.utils.toHex(gasPrice),
-            "gasLimit": web3.utils.toHex(gasLimit),
-            "data": '0x' + data,
-            "chainId": web3.utils.toHex(chainId)
-        }
-        let tx = new Tx(rawTransaction)
-        tx.sign(privateKey)
-        let serializedTx = tx.serialize()
-        let sign = '0x' + serializedTx.toString('hex')
-        try {
-            let date = new Date();
-            let transaction = web3.eth.sendSignedTransaction(sign)
-            transaction.on('confirmation', (confirmationNumber, receipt) => {
-                console.log(`[${date.toLocaleString()} @BATCH] confirmation ${confirmationNumber}`);
-            });
-            transaction.on('transactionHash', hash => {
-                console.log(`[${date.toLocaleString()} @BATCH()] hash ${hash}`);
-            });
-            transaction.on('receipt', receipt => {
-                console.log('reciept', receipt);
-            });
-            transaction.on('error', console.error);
-        } catch (error) {
-            console.log('sendSignedTransaction err:', error);
-        }
-    })
-}
+```javascript
 
-let arguments = process.argv.splice(2);
-pub(arguments[0])
+```
+
+#### 调用 GET 函数
+
+```javascript
+
+```
+
+#### 调用 GETCOUNTER 函数
+
+```javascript
+
 ```
 
 
