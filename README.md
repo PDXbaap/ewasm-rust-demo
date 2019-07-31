@@ -328,17 +328,20 @@ $> chisel run
 
 代码依赖 `nodejs` 环境以及 `npm` 工具，下载后 `npm install` 安装依赖并修改 `config.js` 填入正确的参数即可通过如下操作完成部署和使用合约
 
-
 #### config.js
 
-* ethereumUri :
-* chainId :
-* gasLimit :
-* ethereumUri :
-* ethereumUri :
-* ethereumUri :
-* ethereumUri :
-* ethereumUri :
+配置：
+
+* ethereumUri : pdx-chain 的 rpc 接口地址
+* chainId : 可以通过 admin.nodeInfo 查看当前节点的 chainId,需要正确填写
+* gasLimit : 1500 万gas 
+* gasPrice : 18gwei 的 price
+* keyStore : 在keyStore 中管理的私钥文件内容，是一个 json 
+* password : 私钥文件的密码
+* wasm_path : 要发布的合约 filepath
+* methods : 合约提供的函数，类似 abi 的定义
+
+例如：
 
 ```
 const config = {
@@ -355,33 +358,55 @@ module.exports = config
 ```
 
 
-#### 部署
+#### index.js 
+
+测试程序的入口，正确填写配置后使用 `npm test` 会默认执行这个脚本
 
 ```javascript
 
+function test_put(...params) {
+    let put_method = config.methods['put']
+    put_method = format(put_method, params[0], params[1])
+    let data = web3.utils.toHex(put_method)
+    contract.runWriteMethod(data)
+}
+
+function test_get(key) {
+    let get_method = config.methods['get']
+    get_method = format(get_method, key)
+    let data = web3.utils.toHex(get_method)
+    contract.runReadMethod(data).then(value => {
+        console.log(`value==>${web3.utils.hexToString(value)}`)
+        test_GetCounter()
+    })
+}
+
+function test_GetCounter() {
+    let getcounter_method = config.methods['GetCounter']
+    let data = web3.utils.toHex(getcounter_method)
+    contract.runReadMethod(data).then(counter => {
+        console.log(`counter==>${web3.utils.hexToNumber(counter)}`)
+    })
+}
+
+//部署并调用合约3个方法
+function test() {
+	// 2:合约部署成功后触发该事件，通过 put(key,val) 函数插入状态
+    contract.once('contract_address', contract_address => {
+        console.log(`contract_address==>${contract_address}`)
+        contract.contract_address = contract_address
+        test_put('foo', 'bar')
+    })
+
+	// 3:put成功后触发该事件，通过 get(key) 函数获取刚刚插入的状态
+	// 同时通过合约的 GetCounter 函数获取合约状态变更次数
+    contract.once('runWriteMethod_success', ()=>{
+        test_get('foo')
+    })
+	// 1:部署合约
+    contract.pub()
+}
+
+//脚本入口函数
+test()
 ```
-
-#### 调用 PUT 函数（修改状态）
-
-```javascript
-
-```
-
-#### 调用 GET 函数
-
-```javascript
-
-```
-
-#### 调用 GETCOUNTER 函数
-
-```javascript
-
-```
-
-
-
-
-
-
-
