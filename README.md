@@ -324,7 +324,7 @@ $> chisel run
 
 可以使用 `web3.js` 很方便的在 `pdx-chain` 上发布和使用 `wasm` 合约，我们提供了一个简单的封装用以演示 `hello-wasm` 的部署和调用合约中提供的三个方法
 
-可以将 (test-wasm-js)[https://github.com/PDXbaap/ewasm-rust-demo/tree/master/test-wasm-js] 目录下的演示代码下载到本地，
+可以将 [test-wasm-js](https://github.com/PDXbaap/ewasm-rust-demo/tree/master/test-wasm-js) 目录下的演示代码下载到本地，
 
 代码依赖 `nodejs` 环境以及 `npm` 工具，下载后 `npm install` 安装依赖并修改 `config.js` 填入正确的参数即可通过如下操作完成部署和使用合约
 
@@ -390,20 +390,22 @@ function test_GetCounter() {
 }
 
 //部署并调用合约3个方法
+//此测试方法每次调用时都会重新部署一次 hello-wasm 合约，
+//如果需要一次部署多次执行，需要对此方法进行修改
 function test() {
-	// 2:合约部署成功后触发该事件，通过 put(key,val) 函数插入状态
+    // 2:合约部署成功后触发该事件，通过 put(key,val) 函数插入状态
     contract.once('contract_address', contract_address => {
         console.log(`contract_address==>${contract_address}`)
         contract.contract_address = contract_address
         test_put('foo', 'bar')
     })
 
-	// 3:put成功后触发该事件，通过 get(key) 函数获取刚刚插入的状态
-	// 同时通过合约的 GetCounter 函数获取合约状态变更次数
+    // 3:put成功后触发该事件，通过 get(key) 函数获取刚刚插入的状态
+    // 同时通过合约的 GetCounter 函数获取合约状态变更次数
     contract.once('runWriteMethod_success', ()=>{
         test_get('foo')
     })
-	// 1:部署合约
+    // 1:部署合约
     contract.pub()
 }
 
