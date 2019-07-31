@@ -233,11 +233,11 @@ fn put_data() {
         if sp.len() > 1 {
             let k = sp[0].trim();
             let v = sp[1].trim();
-            // storage_store2 为 pdx 提供的扩展函数
+            // storage_store 为 pdx 提供的扩展函数
             // 用来将不限制大小的 key / value 保存在合约状态中
             // 值得注意的是此方法的 gas 是以数据大小来计算的
             // 每 32byte 数据所使用的 gas 与 storage_store 相同
-            ewasm_api::pdx::storage_store2(k.as_bytes(), v.as_bytes());
+            ewasm_api::pdx::storage_store(k.as_bytes(), v.as_bytes());
         }
     }
 }
@@ -250,11 +250,11 @@ fn get_data() {
     let sd: Vec<&str> = data.split(":").collect();
     if sd.len() > 1 {
         let k = sd[1].trim();
-        // storage_load2 为 pdx 提供的扩展函数
+        // storage_load 为 pdx 提供的扩展函数
         // 用来获取 key 对应的不限制大小的 value
         // 值得注意的是此方法的 gas 是以数据大小来计算的
         // 每 32byte 数据所使用的 gas 与 storage_store 相同
-        let v: Vec<u8> = ewasm_api::pdx::storage_load2(k.as_bytes());
+        let v: Vec<u8> = ewasm_api::pdx::storage_load(k.as_bytes());
         // 将合约执行结果返回给调用端
         ewasm_api::finish_data(&v[..]);
     }
