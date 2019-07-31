@@ -111,11 +111,6 @@ hello:
 前者提供 `api` 与 pdx-chain 交互，后者负责编译 rust 为 wasm ; 
 
 `pdx-chain` 对 `eei` 进行了扩展，需要使用 `pdx` 提供的 `ewasm-rust-api`
-需要单独下载到工作目录，假设也安在 `/app/rusthome` 目录下，进入工作目录并 clone
-
-```bash
-$> git clone https://github.com/PDXbaap/ewasm-rust-api.git
-```
 
 编辑 `hello-wasm/Cargo.toml` 文件，添加依赖到 `dependencies` 下，并且配置 `profile.release` 以优化编译结果
 
@@ -129,7 +124,7 @@ publish = false
 
 [dependencies]
 wasm-bindgen = "0.2"
-ewasm_api = {path="/app/rusthome/ewasm-rust-api"}
+ewasm_api = { git = "https://github.com/PDXbaap/ewasm-rust-api", tag = "0.9" }
 
 [lib]
 crate-type = ["cdylib"]
@@ -326,7 +321,7 @@ const Web3 = require('web3')
 const co = require('co')
 const thunk = require('thunkify')
 const Tx = require('ethereumjs-tx')
-const ethereumUri = 'http://10.0.0.76:8545'
+const ethereumUri = 'http://127.0.0.1:8545'
 const web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri))
 const chainId = 738
 const gasLimit = 15000000
