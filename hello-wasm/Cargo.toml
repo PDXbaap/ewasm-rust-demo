@@ -7,7 +7,8 @@ publish = false
 
 [dependencies]
 wasm-bindgen = "0.2"
-ewasm_api = {path="/app/rusthome/ewasm-rust-api"}
+#ewasm_api = {path="/app/rusthome/ewasm-rust-api"}
+ewasm_api = { git = "https://github.com/PDXbaap/ewasm-rust-api", tag = "0.9" }
 
 [lib]
 crate-type = ["cdylib"]
