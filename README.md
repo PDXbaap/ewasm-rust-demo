@@ -343,7 +343,7 @@ $> chisel run
 
 例如：
 
-```
+```javascript
 const config = {
     'ethereumUri': 'http://127.0.0.1:8545', 
     'chainId': 738,
