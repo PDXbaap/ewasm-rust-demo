@@ -37,7 +37,7 @@ The `wasm`  `start function` must be closed，because enabling it would hinder `
 >How to use functions other than `main`? Natually we use the `input` of the d-App to  define <br>
 >destination function and input parameters, which in fact is what `solidity` does, just we return this flexibility <br>
 >to the developers to implement. Use the unform `main` function as entrypoint and encapsulate the `input` <br>
-> as what `solidity` does using `rlp`. In the examples later we can see more flexible options. <br>
+>In the examples later we can see more flexible options. <br>
 
 ## Development Environment
 
@@ -186,7 +186,7 @@ use wasm_bindgen::prelude::*;
 use ewasm_api::types::*;
 use ewasm_api::pdx::utils::*;
 
-// Define a 32-bit counter key 
+// Define a 32-byte counter key 
 const COUNTER_KEY: Bytes32 = Bytes32 { bytes: [255; 32] };
 
 // increment counter on each call. The count is recorded on the blockchain to test the state write op
