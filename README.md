@@ -1,6 +1,6 @@
 ## 合约开发规范
 
-ewasm 合约接口规范由以太坊定制，指定模块结构等信息，pdx-chain 严格遵循此规范，具体如下
+ewasm 合约接口规范由以太坊定制，指定模块结构等信息，PDX Utopia 严格遵循此规范，具体如下
 
 ### 数据类型
 
@@ -37,12 +37,12 @@ ewasm 合约接口规范由以太坊定制，指定模块结构等信息，pdx-c
 >如何使用 `main` 函数之外的函数呢？我们很自然就想到了使用合约的 `input` 来 <br>
 >定义目标方法和输入参数，事实上 `solidity` 也是这么做的，只是我们把这个灵活性 <br>
 >交还给开发者实现，以统一的 `main` 函数作为入口，然后自行封装 `input` 序列化方案，<br>
->`solidity` 使用了 `rlp` 序列化 `input` , 在后面的例子中我们可以看到更加灵活的方式。<br>
+>在后面的例子中我们可以看到更加灵活的方式。<br>
 
 
 ## 开发环境安装
 
-pdx-chain 使用 rust 作为 ewasm 合约开发语言，并通过 rust 工具链对合约进行编译，具体安装与使用流程如下
+PDX Utopia 使用 rust 作为 ewasm 合约开发语言，并通过 rust 工具链对合约进行编译，具体安装与使用流程如下
 
 1. 安装 rustup
 
@@ -117,9 +117,9 @@ hello:
 ### 添加依赖
 
 一个 `wasm` 合约至少要依赖两个开发包，`ewasm-rust-api` 和 `wasm-bindgen` ，
-前者提供 `api` 与 pdx-chain 交互，后者负责编译 rust 为 wasm ; 
+前者提供 `api` 与 PDX Utopia 交互，后者负责编译 rust 为 wasm ; 
 
-`pdx-chain` 对 `eei` 进行了扩展，需要使用 `pdx` 提供的 `ewasm-rust-api`
+`PDX Utopia` 对 `eei` 进行了扩展，需要使用 `pdx` 提供的 `ewasm-rust-api`
 
 编辑 `hello-wasm/Cargo.toml` 文件，添加依赖到 `dependencies` 下，并且配置 `profile.release` 以优化编译结果
 
@@ -317,12 +317,12 @@ $> wasm-pack build
 $> chisel run
 ```
 
-以上步骤将在 `pkg` 目录中得到 `hello_wasm_bg.wasm` 文件，接下来我们去 `pdx-chain` 部署这份合约
+以上步骤将在 `pkg` 目录中得到 `hello_wasm_bg.wasm` 文件，接下来我们去 `PDX Utopia` 部署这份合约
 
 
 ### 部署&调用合约
 
-可以使用 `web3.js` 很方便的在 `pdx-chain` 上发布和使用 `wasm` 合约，我们提供了一个简单的封装用以演示 `hello-wasm` 的部署和调用合约中提供的三个方法
+可以使用 `web3.js` 很方便的在 `PDX Utopia` 上发布和使用 `wasm` 合约，我们提供了一个简单的封装用以演示 `hello-wasm` 的部署和调用合约中提供的三个方法
 
 可以将 [test-wasm-js](https://github.com/PDXbaap/ewasm-rust-demo/tree/master/test-wasm-js) 目录下的演示代码下载到本地，
 
@@ -332,7 +332,7 @@ $> chisel run
 
 配置：
 
-* ethereumUri : pdx-chain 的 rpc 接口地址
+* ethereumUri : PDX Utopia 的 rpc 接口地址
 * chainId : 可以通过 admin.nodeInfo 查看当前节点的 chainId,需要正确填写
 * gasLimit : 1500 万gas 
 * gasPrice : 18gwei 的 price
