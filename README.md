@@ -421,4 +421,4 @@ test()
 >为了增加可用性我们的 sdk 中也提供了对 abi 进行序列化与反序列化的功能，但是这会增加编译结果的尺寸<br>
 >会额外消耗一些 gas，并且编写 ABI 模版时必须严格按照我们样例中提供的方式来编写，不能使用 JSON 库来解析字符串<br>
 
-* [hello-wasm-abi](https://github.com/PDXbaap/ewasm-rust-demo/blob/master/README-EN.md)
+* [hello-wasm-abi](https://github.com/PDXbaap/ewasm-rust-demo/blob/master/README-ABI.md)
