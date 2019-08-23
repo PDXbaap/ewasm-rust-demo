@@ -40,6 +40,7 @@ ewasm 合约接口规范由以太坊定制，指定模块结构等信息，PDX U
 >在后面的例子中我们可以看到更加灵活的方式。<br>
 
 
+
 ## 开发环境安装
 
 PDX Utopia 使用 rust 作为 ewasm 合约开发语言，并通过 rust 工具链对合约进行编译，具体安装与使用流程如下
@@ -412,3 +413,12 @@ function test() {
 //脚本入口函数
 test()
 ```
+
+
+### 在 WASM 中使用 ABI
+
+>符合 ABI 规范的好处是可以直接与 web3 提供的 sdk 进行无缝集成，对于 dapp 开发者比较友好<br>
+>为了增加可用性我们的 sdk 中也提供了对 abi 进行序列化与反序列化的功能，但是这会增加编译结果的尺寸<br>
+>会额外消耗一些 gas，并且编写 ABI 模版时必须严格按照我们样例中提供的方式来编写，不能使用 JSON 库来解析字符串<br>
+
+* [hello-wasm-abi](https://github.com/PDXbaap/ewasm-rust-demo/blob/master/README-EN.md)
