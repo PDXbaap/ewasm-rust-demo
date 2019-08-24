@@ -138,8 +138,8 @@ pub fn get_contract_abi() -> ethabi::Contract {
     }
 }
 ```
+## 使用 `ABI`
 
-
-
+>在 hello-wasm-abi 合约中
 
 
