@@ -154,7 +154,6 @@ use ewasm_api::pdx::utils::*;
 use ewasm_api::pdxabi;
 // pdxabi::Contract 定义的对象放在 abi 模块中
 pub mod abi;
-use crate::abi::get_contract_abi;
 
 const COUNTER_KEY: Bytes32 = Bytes32 { bytes: [255; 32] };
 
@@ -186,7 +185,7 @@ pub fn main() {
     let input = ewasm_api::calldata_acquire();
     if !input.is_empty() {
     	// 获取 pdxabi::Contract 对象，这个函数写在 abi 模块中
-        let mut contract = get_contract_abi();
+        let mut contract = abi::get_contract_abi();
 	// 从 input 获取方法签名，按照 ABI 规范，input 的前 4 个 byte 为方法签名
 	let fn_sig = &Vec::from(&input[..4]);
 	// 根据方法签名获取 function 对象
