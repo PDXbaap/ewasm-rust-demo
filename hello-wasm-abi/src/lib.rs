@@ -5,21 +5,12 @@ use wasm_bindgen::prelude::*;
 use ewasm_api::types::*;
 use ewasm_api::pdx::utils::*;
 
-pub mod abi;
-
 use ewasm_api::ethabi;
+pub mod abi;
 use crate::abi::get_contract_abi;
 
-// 为 counter 定义一个 32位的 key
 const COUNTER_KEY: Bytes32 = Bytes32 { bytes: [255; 32] };
 
-/* 合约接口
-contract hello_wasm_abi {
-    function getcounter() public view returns(uint256);
-    function get(string memory key) public view returns(string memory);
-    function put(string memory key,string memory val) public payable;
-}
-*/
 fn inc_counter() {
     let old_v = ewasm_api::storage_load(&COUNTER_KEY);
     let old_i = bytes_to_uint(&old_v.bytes[..]);
@@ -48,8 +39,6 @@ pub fn main() {
     inc_counter();
     let input = ewasm_api::calldata_acquire();
     if !input.is_empty() {
-        // 用 ethabi 解析 input
-        //let mut contract = ethabi::Contract::load(abi::HELLO_WASM_ABI.as_bytes()).expect("error_abi");
         let mut contract = get_contract_abi();
         let fn_sig = &Vec::from(&input[..4]);
         let function = contract.function_by_sig(fn_sig).expect("error_fn_sig");
