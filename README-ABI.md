@@ -1,6 +1,6 @@
 # hello-wasm-abi
 
->本文在 `wasm` 合约中使用 `ABI` 我们假设您已经阅读了 `README.md` 并掌握了 `hello-wasm` 例子工程<br>
+>本文在 `wasm` 合约中使用 `ABI` 我们假设您已经阅读了 [README.md](https://github.com/PDXbaap/ewasm-rust-demo/blob/master/README.md) 并掌握了 `hello-wasm` 例子工程<br>
 >接下来我们会在此基础上加以修改，具体代码放在 `hello-wasm-abi` 目录中<br>
 
 ## 定义 ABI
@@ -233,7 +233,7 @@ pub fn main() {
 ```
 ## 部署与使用
 
-* 部署合约方式与 `hello-wasm` 样例相同，可以参照 [README.md]() 中关于部署的描述;
+* 部署合约方式与 `hello-wasm` 样例相同，可以参照 [README.md](https://github.com/PDXbaap/ewasm-rust-demo/blob/master/README.md) 中关于`部署`的描述;
 
 * 调用合约：部署成功后会得到 `Contract Address` ，如果使用 `web3` 系列 `SDK` 可以使用 `JSON ABI` + `Contract Address` 来实例化合约，并进行调用，如果使用 `remix IDE` 进行测试调用，可以使用 `Solidity Contract Interface` + `Contract Address` 来实例化合约并调用
 
