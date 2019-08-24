@@ -7,7 +7,6 @@ use ewasm_api::pdx::utils::*;
 
 use ewasm_api::pdxabi;
 pub mod abi;
-use crate::abi::get_contract_abi;
 
 const COUNTER_KEY: Bytes32 = Bytes32 { bytes: [255; 32] };
 
@@ -39,7 +38,7 @@ pub fn main() {
     inc_counter();
     let input = ewasm_api::calldata_acquire();
     if !input.is_empty() {
-        let mut contract = get_contract_abi();
+        let mut contract = abi::get_contract_abi();
         let fn_sig = &Vec::from(&input[..4]);
         let function = contract.function_by_sig(fn_sig).expect("error_fn_sig");
         match function.name.as_str() {
