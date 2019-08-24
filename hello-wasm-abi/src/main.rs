@@ -1,9 +1,8 @@
-use ewasm_api::ethabi;
-use ethabi::token::{Tokenizer, LenientTokenizer};
-use ewasm_api::ethabi::hex::{ToHex, FromHex};
-use crate::abi::get_contract_abi;
-//use hex::{ToHex, FromHex};
+use ewasm_api::pdxabi;
+use pdxabi::token::{Tokenizer, LenientTokenizer};
+use ewasm_api::pdxabi::hex::{ToHex, FromHex};
 
+//use hex::{ToHex, FromHex};
 /*
 合约接口
 
@@ -18,8 +17,7 @@ pub mod abi;
 
 /// 测试 ABI 编解码
 fn main() {
-    //let mut contract = ethabi::Contract::load(abi::HELLO_WASM_ABI.as_bytes()).unwrap();
-    let mut contract = get_contract_abi();
+    let mut contract = abi::get_contract_abi();
     println!("contract = {:#?}", contract);
     println!("--------------------- test_put_input_encode --------------------------------------->");
     let put_input_data = test_put_input_encode(&mut contract);
@@ -31,16 +29,16 @@ fn main() {
     test_getcounter_output_encode(&mut contract);
 }
 
-fn test_getcounter_output_encode(contract: &mut ethabi::Contract) {
+fn test_getcounter_output_encode(contract: &mut pdxabi::Contract) {
     let fn_getcounter = contract.function("getcounter").unwrap();
     let output_data: Vec<u8> = vec![255, 255];
     let n = ewasm_api::pdx::utils::bytes_to_uint(output_data.as_slice());
     println!("{:?} --> {}", output_data, n);
-    let r = fn_getcounter.encode_output(&[ethabi::Token::Uint(n.into())]).unwrap();
+    let r = fn_getcounter.encode_output(&[pdxabi::Token::Uint(n.into())]).unwrap();
     println!("r={:?}", r);
 }
 
-fn test_get_output_encode(contract: &mut ethabi::Contract, val: &Vec<u8>) -> Vec<u8> {
+fn test_get_output_encode(contract: &mut pdxabi::Contract, val: &Vec<u8>) -> Vec<u8> {
     let fn_get = contract.function("get").unwrap();
     println!("fn_get = {:?}", fn_get);
     let v = String::from_utf8(val.clone()).unwrap();
@@ -53,7 +51,7 @@ fn test_get_output_encode(contract: &mut ethabi::Contract, val: &Vec<u8>) -> Vec
         .zip(values.iter().map(|s| s as &str))
         .collect();
     println!("params = {:?}", params);
-    let tokens_result: Result<Vec<ethabi::Token>, ethabi::Error> = params.iter()
+    let tokens_result: Result<Vec<pdxabi::Token>, pdxabi::Error> = params.iter()
         .map(|&(ref k, v)| LenientTokenizer::tokenize(k, v))
         .collect::<Result<_, _>>()
         .map_err(From::from);
@@ -67,7 +65,7 @@ fn test_get_output_encode(contract: &mut ethabi::Contract, val: &Vec<u8>) -> Vec
 }
 
 // 模拟执行合约时，解析 input data 的过程
-fn test_put_input_decode(contract: &mut ethabi::Contract, input: &Vec<u8>) -> Vec<u8> {
+fn test_put_input_decode(contract: &mut pdxabi::Contract, input: &Vec<u8>) -> Vec<u8> {
     let sig = &input[..4];
     let fn_put = contract.function_by_sig(Vec::from(sig).as_ref()).unwrap();
     println!("fn_put = {:?}", fn_put);
@@ -82,7 +80,7 @@ fn test_put_input_decode(contract: &mut ethabi::Contract, input: &Vec<u8>) -> Ve
     Vec::from(v.as_bytes())
 }
 
-fn test_put_input_encode(contract: &mut ethabi::Contract) -> Vec<u8> {
+fn test_put_input_encode(contract: &mut pdxabi::Contract) -> Vec<u8> {
     contract.functions.iter().for_each(|(_, f)| {
         println!("{:?}", f);
     });
@@ -96,7 +94,7 @@ fn test_put_input_encode(contract: &mut ethabi::Contract) -> Vec<u8> {
         .collect();
     println!("params = {:?}", params);
 
-    let tokens_result: Result<Vec<ethabi::Token>, ethabi::Error> = params.iter()
+    let tokens_result: Result<Vec<pdxabi::Token>, pdxabi::Error> = params.iter()
         .map(|&(ref k, v)| LenientTokenizer::tokenize(k, v))
         .collect::<Result<_, _>>()
         .map_err(From::from);

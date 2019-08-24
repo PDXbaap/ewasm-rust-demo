@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 use ewasm_api::types::*;
 use ewasm_api::pdx::utils::*;
 
-use ewasm_api::ethabi;
+use ewasm_api::pdxabi;
 pub mod abi;
 use crate::abi::get_contract_abi;
 
@@ -45,7 +45,7 @@ pub fn main() {
         match function.name.as_str() {
             "getcounter" => {
                 let rtn = ewasm_api::pdx::utils::bytes_to_uint(get_counter().as_slice());
-                let data = function.encode_output(&[ethabi::Token::Uint(rtn.into())]).unwrap();
+                let data = function.encode_output(&[pdxabi::Token::Uint(rtn.into())]).unwrap();
                 ewasm_api::finish_data(data.as_slice());
             }
             "get" => {
@@ -53,7 +53,7 @@ pub fn main() {
                 let key = tokens.get(0).expect("error_put_key");
                 let val = get_data(key.clone().to_string().unwrap());
                 let rtn = String::from_utf8(val).expect("error_get_val");
-                let data = function.encode_output(&[ethabi::Token::String(rtn)]).expect("error_get_output");
+                let data = function.encode_output(&[pdxabi::Token::String(rtn)]).expect("error_get_output");
                 ewasm_api::finish_data(data.as_slice());
             }
             "put" => {

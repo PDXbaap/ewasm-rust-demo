@@ -7,13 +7,13 @@
 
 >在 `hello-wasm-abi/src/abi.rs` 中定义了 Contract 对象，包含了 `hello-wasm` 样例中的 <br>
 >`put/get/getcounter` 三个方法的 `ABI` 描述，注意，我们还不能直接用 `JSON` 来描述 `ABI`<br>
->必须使用 `ethabi::Contract` 来定义声明；
+>必须使用 `pdxabi::Contract` 来定义声明；
 
 建议通过以下三步来生成 ABI : 
 
 1. 使用 `solidity` 编写 `contract interface`;
 1. 使用 `remix` 编译 `contract interface` 得到对应的 `ABI` 描述；
-1. 参照 `ABI` 描述文件编写 `ethabi::Contract`；
+1. 参照 `ABI` 描述文件编写 `pdxabi::Contract`；
 
 部署 wasm 合约后可以使用合约地址和 contract interface 在 remix 里对合约进行实例化，方便测试
 
@@ -92,44 +92,44 @@ contract hello_wasm_abi {
 ]
 ```
 
-### ethabi::Contract
+### pdxabi::Contract
 
-根据 `JSON ABI` 描述实例化 `ethabi::Contract` 对象，用来对合约的 `input/output` 进行序列化和反序列化
+根据 `JSON ABI` 描述实例化 `pdxabi::Contract` 对象，用来对合约的 `input/output` 进行序列化和反序列化
 
 ```rust
-pub fn get_contract_abi() -> ethabi::Contract {
-    let mut functions: HashMap<String, ethabi::Function> = HashMap::new();
-    let fn_put = ethabi::Function {
+pub fn get_contract_abi() -> pdxabi::Contract {
+    let mut functions: HashMap<String, pdxabi::Function> = HashMap::new();
+    let fn_put = pdxabi::Function {
         constant: false,
         name: String::from("put"),
         inputs: Vec::from(vec![
-            ethabi::Param { name: String::from("key"), kind: ethabi::param_type::ParamType::String },
-            ethabi::Param { name: String::from("val"), kind: ethabi::param_type::ParamType::String },
+            pdxabi::Param { name: String::from("key"), kind: pdxabi::param_type::ParamType::String },
+            pdxabi::Param { name: String::from("val"), kind: pdxabi::param_type::ParamType::String },
         ]),
         outputs: Vec::default(),
     };
-    let fn_get = ethabi::Function {
+    let fn_get = pdxabi::Function {
         constant: true,
         name: String::from("get"),
         inputs: Vec::from(vec![
-            ethabi::Param { name: String::from("key"), kind: ethabi::param_type::ParamType::String },
+            pdxabi::Param { name: String::from("key"), kind: pdxabi::param_type::ParamType::String },
         ]),
         outputs: Vec::from(vec![
-            ethabi::Param { name: String::default(), kind: ethabi::param_type::ParamType::String },
+            pdxabi::Param { name: String::default(), kind: pdxabi::param_type::ParamType::String },
         ]),
     };
-    let fn_getcounter = ethabi::Function {
+    let fn_getcounter = pdxabi::Function {
         constant: true,
         name: String::from("getcounter"),
         inputs: Vec::default(),
         outputs: Vec::from(vec![
-            ethabi::Param { name: String::default(), kind: ethabi::param_type::ParamType::Uint(256) },
+            pdxabi::Param { name: String::default(), kind: pdxabi::param_type::ParamType::Uint(256) },
         ]),
     };
     functions.insert(fn_put.clone().name, fn_put.clone());
     functions.insert(fn_get.clone().name, fn_get.clone());
     functions.insert(fn_getcounter.clone().name, fn_getcounter.clone());
-    ethabi::Contract {
+    pdxabi::Contract {
         constructor: None,
         functions: functions,
         events: HashMap::default(),
@@ -151,8 +151,8 @@ use ewasm_api::types::*;
 use ewasm_api::pdx::utils::*;
 
 // 倒入处理 abi 的开发库
-use ewasm_api::ethabi;
-// ethabi::Contract 定义的对象放在 abi 模块中
+use ewasm_api::pdxabi;
+// pdxabi::Contract 定义的对象放在 abi 模块中
 pub mod abi;
 use crate::abi::get_contract_abi;
 
@@ -185,7 +185,7 @@ pub fn main() {
     inc_counter();
     let input = ewasm_api::calldata_acquire();
     if !input.is_empty() {
-    	// 获取 ethabi::Contract 对象，这个函数写在 abi 模块中
+    	// 获取 pdxabi::Contract 对象，这个函数写在 abi 模块中
         let mut contract = get_contract_abi();
 	// 从 input 获取方法签名，按照 ABI 规范，input 的前 4 个 byte 为方法签名
 	let fn_sig = &Vec::from(&input[..4]);
@@ -197,7 +197,7 @@ pub fn main() {
 	    	// 调用 get_counter 得到返回值，转换成 uint
                 let rtn = ewasm_api::pdx::utils::bytes_to_uint(get_counter().as_slice());
 		// 此方法没有输入值，只有输出，通过 function.encode_output 序列化输出 
-		let data = function.encode_output(&[ethabi::Token::Uint(rtn.into())]).unwrap();
+		let data = function.encode_output(&[pdxabi::Token::Uint(rtn.into())]).unwrap();
 		// 将结果返回给合约调用者
 		ewasm_api::finish_data(data.as_slice());
             }
@@ -211,7 +211,7 @@ pub fn main() {
 		// 接口描述输出值为 string，所以要将 val 转换为 string
 		let rtn = String::from_utf8(val).expect("error_get_val");
 		// 使用 function.encode_output 对返回值进行序列化
-                let data = function.encode_output(&[ethabi::Token::String(rtn)]).expect("error_get_output");
+                let data = function.encode_output(&[pdxabi::Token::String(rtn)]).expect("error_get_output");
 		// 将结果返回给合约调用者
                 ewasm_api::finish_data(data.as_slice());
             }
