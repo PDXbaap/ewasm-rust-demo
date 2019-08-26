@@ -207,3 +207,90 @@ pub fn main() {
 }
 ```
 
+编译并部署 (hello-wasm-sol)[https://github.com/PDXbaap/ewasm-rust-demo/tree/master/hello-wasm-sol] 得到 wasm 合约地址
+
+
+## hello_sol 接口实现 
+
+依然推荐使用 (remix)[http://remix.ethereum.org/#optimize=false&version=soljson-v0.5.3+commit.10d17f24.js&evmVersion=null&appVersion=0.7.7] 来开发和调试符合 `ABI` 标准的合约
+
+```solidity
+contract hello_sol_impl is hello_sol {
+    
+    mapping(string => string) data ;
+    
+    // 被 wasm 合约 solget 方法调用的 get 方法
+    function get(string memory key) public view returns(string memory) {
+        return data[key];    
+    }
+    // 被 wasm 合约 solput 方法调用的 put 方法
+    function put(string memory key,string memory val) public payable {
+        data[key] = val;
+    }
+    
+    // 调用 addr 地址对应的 wasm 合约的 get 方法    
+    function wasmget(address addr,string memory key) public view returns(string memory) {
+        hello_wasm_abi hello = hello_wasm_abi(addr);
+        return hello.get(key);
+    }
+    // 调用 addr 地址对应的 wasm 合约的 put 方法
+    function wasmput(address addr,string memory key,string memory val) public payable {
+        hello_wasm_abi hello = hello_wasm_abi(addr);
+        hello.put(key,val);
+    }
+    
+}
+
+```
+
+## test case
+
+以上两个简单的实现已经可以用来演示 `wasm` 与 `sol` 之间的相互调用了，
+启动节点并用 `remix` 直接部署 `hello_sol_impl` 得到合约地址，做如下假设：
+
+* hello_wasm_abi : 实现此接口的合约地址为 `0xA`
+
+* hello_sol : 实现此接口的合约地址为 `0xB`
+
+分别在用 `hello_wasm_abi` 接口加 `0xA` 实例化 `hello-wasm-sol` 合约；
+用 `hello_sol` 接口加 `0xB` 实例化 `hello_sol_impl` 合约；
+
+
+```nodejs
+hello_wasm_abi a = hello_wasm_abi(address("0xA"));
+hello_sol b = hello_sol(address("0xB"));
+
+// wasm 合约调用自己的 put 
+a.put("foo","bar");
+// wasm 合约调用 sol 合约的 put
+a.solput("0xB","foo","hello");
+
+// sol 合约调用自己的 put
+b.put("hello","world");
+// sol 合约调用 wasm 合约的 put
+b.wasmput("0xA","hello","bar");
+
+// wasm 合约调用自己的 get
+a_foo = a.get("foo");
+// wasm 合约调用 sol 合约的 get
+ab_foo = a.solget("0xB","foo");
+
+// sol 合约调用自己的 get
+b_hello = b.get("hello");
+// sol 合约调用 wasm 的 get
+ba_hello = b.wasmget("0xB","hello");
+
+// assert
+
+assert_equal(a_foo,"bar");
+assert_equal(ab_foo,"hello");
+
+assert_equal(b_hello,"world");
+assert_equal(ba_hello,"foo");
+
+
+```
+
+
+
+
