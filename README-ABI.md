@@ -238,3 +238,39 @@ pub fn main() {
 
 关于 web3 提供的 SDK 和 remix IDE 的详细资料请参阅 web3 基金会的相关资料
 
+
+## Solidity 调用 Wasm 合约
+
+用 sol 合约来调用 wasm 合约，与 sol 调用 sol 方式相同，
+假设已经部署过 hello_wasm_abi 这个合约，并得到合约地址 `0xda3ce11d916ffba4a1289cef66a7f142ec5a0f74`,
+通过 `hello_wasm_abi` 合约接口和地址，即可实例化这个合约，之后用法与 sol 调用 sol 一致，
+例如：
+
+```
+pragma solidity ^0.5.3;
+
+// hello-wasm-abi 合约接口
+contract hello_wasm_abi {
+    function getcounter() public view returns(uint256);
+    function get(string memory key) public view returns(string memory);
+    function put(string memory key,string memory val) public payable;
+}        
+
+// 使用 hello-wasm-abi 合约的 solidity 合约
+contract foobar {
+    
+    function fetch(address addr,string memory key) public view returns(string memory) {
+    	// 第一个参数 addr 为 wasm 合约地址，通过接口和地址实例化合约对象
+        hello_wasm_abi hello = hello_wasm_abi(addr);
+	// 调用 wasm 合约方法
+        return hello.get(key);
+    }
+    
+    function set(address addr,string memory key,string memory val) public payable {
+        hello_wasm_abi hello = hello_wasm_abi(addr);
+        hello.put(key,val);
+    }
+
+}
+```
+
