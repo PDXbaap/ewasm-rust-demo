@@ -421,4 +421,15 @@ test()
 >为了增加可用性我们的 sdk 中也提供了对 abi 进行序列化与反序列化的功能，但是这会增加编译结果的尺寸<br>
 >会额外消耗一些 gas，并且编写 ABI 模版时必须严格按照我们样例中提供的方式来编写，不能使用 JSON 库来解析字符串<br>
 
-* [hello-wasm-abi](https://github.com/PDXbaap/ewasm-rust-demo/blob/master/README-ABI.md)
+* 文档参见 [README-ABI.md](https://github.com/PDXbaap/ewasm-rust-demo/blob/master/README-ABI.md)
+
+* 样例代码 [hello-wasm-abi](https://github.com/PDXbaap/ewasm-rust-demo/tree/master/hello-wasm-abi)
+
+
+### WASM 合约与 Solidity 合约互相调用
+
+>wasm 合约与 sol 合约之间的互相调用是建立在两端都符合 `ABI` 规范的基础之上的，部署之后调用方式与 sol 调用 sol 类似，具体参见样例文档
+
+* 文档参见 [README-SOL.md](https://github.com/PDXbaap/ewasm-rust-demo/blob/master/README-SOL.md)
+
+* 样例代码 [hello-wasm-sol](https://github.com/PDXbaap/ewasm-rust-demo/tree/master/hello-wasm-sol)
