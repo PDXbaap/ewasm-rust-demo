@@ -256,8 +256,10 @@ contract hello_sol_impl is hello_sol {
 用 `hello_sol` 接口加 `0xB` 实例化 `hello_sol_impl` 合约；
 
 
-```nodejs
+```solidity
+// 实例化 wasm 合约
 hello_wasm_abi a = hello_wasm_abi(address("0xA"));
+// 实例化 sol 合约
 hello_sol b = hello_sol(address("0xB"));
 
 // wasm 合约调用自己的 put 
@@ -287,8 +289,6 @@ assert_equal(ab_foo,"hello");
 
 assert_equal(b_hello,"world");
 assert_equal(ba_hello,"foo");
-
-
 ```
 
 
