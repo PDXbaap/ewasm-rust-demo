@@ -241,12 +241,12 @@ pub fn main() {
 
 ## Solidity 调用 Wasm 合约
 
-用 sol 合约来调用 wasm 合约，与 sol 调用 sol 方式相同，
-假设已经部署过 hello_wasm_abi 这个合约，并得到合约地址 `0xda3ce11d916ffba4a1289cef66a7f142ec5a0f74`,
-通过 `hello_wasm_abi` 合约接口和地址，即可实例化这个合约，之后用法与 sol 调用 sol 一致，
+用 `sol` 合约来调用 `wasm` 合约，与 `sol` 调用 `sol` 方式相同，
+假设已经部署过 `hello-wasm-abi` 这个合约，并得到合约地址 `0xda3ce11d916ffba4a1289cef66a7f142ec5a0f74`,
+通过 `hello-wasm-abi` 合约接口和地址，即可实例化这个合约，之后用法与 `sol` 调用 `sol` 一致，
 例如：
 
-```
+```solidity
 pragma solidity ^0.5.3;
 
 // hello-wasm-abi 合约接口
@@ -273,4 +273,9 @@ contract foobar {
 
 }
 ```
+
+部署 `foobar` 合约后，使用 `hello-wasm-abi` 的合约地址 `0xda3ce11d916ffba4a1289cef66a7f142ec5a0f74` 作为第一个参数分别
+调用 `fetch` 和 `set` 方法，完成对 `hello-wasm-abi` 合约的 `get` 和 `put` 的调用。 
+
+
 
