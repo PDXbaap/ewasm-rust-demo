@@ -6,10 +6,8 @@ use ewasm_api::types::*;
 use ewasm_api::pdx::utils::*;
 
 use ewasm_api::pdxabi;
-use crate::abi::get_sol_contract_abi;
 
 use ewasm_api::prelude::debug;
-use ewasm_api::debug::print_mem_hex;
 
 pub mod abi;
 
@@ -40,7 +38,7 @@ fn get_data(k: String) -> Vec<u8> {
 fn callsol_put_data(a: &ewasm_api::pdxabi::Token, k: &ewasm_api::pdxabi::Token, v: &ewasm_api::pdxabi::Token) {
     let addr = a.clone().to_address().expect("error_address");
     let gas = ewasm_api::gas_left();
-    let sol = get_sol_contract_abi();
+    let sol = abi::get_sol_contract_abi();
     let fn_put = sol.function("put").unwrap();
     let input_data = fn_put.encode_input(&[k.clone(), v.clone()]).expect("error_input");
     let value = &ewasm_api::types::EtherValue { bytes: [0; 16] };
@@ -50,12 +48,10 @@ fn callsol_put_data(a: &ewasm_api::pdxabi::Token, k: &ewasm_api::pdxabi::Token, 
 fn callsol_get_data(a: &ewasm_api::pdxabi::Token, k: &ewasm_api::pdxabi::Token) -> Vec<u8> {
     let addr = a.clone().to_address().expect("error_address");
     let gas = ewasm_api::gas_left();
-    let sol = get_sol_contract_abi();
+    let sol = abi::get_sol_contract_abi();
     let fn_get = sol.function("get").unwrap();
     let input_data = fn_get.encode_input(&[k.clone()]).expect("error_input");
     let value = &ewasm_api::types::EtherValue { bytes: [0; 16] };
-    print_mem_hex(&addr.0[..]);
-    print_mem_hex(&value.bytes[..]);
     let ret = ewasm_api::call_mutable(gas, &ewasm_api::types::Bytes20 { bytes: addr.0 }, value, input_data.as_slice());
     let mut output: Vec<u8> = Vec::new();
     match ret {
