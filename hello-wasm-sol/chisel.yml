@@ -1,0 +1,12 @@
+hello:
+  file: "pkg/hello_wasm_sol_bg.wasm"
+  remapimports:
+    preset: "ewasm,debug"
+  trimexports:
+    preset: "ewasm,debug"
+  verifyimports:
+    preset: "ewasm,debug"
+  verifyexports:
+    preset: "ewasm,debug"
+  repack:
+    preset: "ewasm,debug"
