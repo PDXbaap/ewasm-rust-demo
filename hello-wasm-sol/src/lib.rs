@@ -7,8 +7,6 @@ use ewasm_api::pdx::utils::*;
 
 use ewasm_api::pdxabi;
 
-use ewasm_api::prelude::debug;
-
 pub mod abi;
 
 const COUNTER_KEY: Bytes32 = Bytes32 { bytes: [255; 32] };
