@@ -17,13 +17,13 @@ ewasm 合约接口规范由以太坊定制，指定模块结构等信息，PDX U
 
 ### 导入模块
 
-规定合约 import 的范围仅限于 EEI 提供的模块，ethereum 名称空间以外的包只允许使用 debug ，在生产环境中 debug 也应被禁止使用
+规定合约 `import` 的范围仅限于 [EEI](https://github.com/ewasm/design/blob/master/eth_interface.md) 提供的模块，`ethereum` 名称空间以外的包只允许使用 `debug` ，在生产环境中 `debug` 也应被禁止使用
 
 ### 导出函数 
 
 每个合约必须导出两个函数(只能导出两个函数)
 
-* memory : 可供 EEI 写入的共享内存
+* memory : 可供 [EEI](https://github.com/ewasm/design/blob/master/eth_interface.md) 写入的共享内存
 * main : 一个入口函数，没有参数也没有返回值，将被 VM 执行
 
 要关闭 `wasm` 的 `start function` 功能，开启它会影响 `ewasm` 在启动前获取合约内存地址指针的功能
